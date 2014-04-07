@@ -6,7 +6,7 @@ import java.util.List;
 
 public class SensorNodes {
 
-    public SensorNodes(GraphService graphService) {
+    public SensorNodes() {
         // TODO Auto-generated constructor stub
     }
 
