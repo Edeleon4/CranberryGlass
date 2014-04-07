@@ -1,11 +1,10 @@
 package com.example.cranberry_glass;
+
 import java.io.IOException;
 
-import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.example.cranberry_glass.model.CranberryServerManager;
+import com.example.cranberry_glass.model.CranberryJsonEvaluator;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -19,28 +18,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		Thread downloadThread = new Thread() {  
 			//CranberryServerManager server = new CranberryServerManager();
-
-		    public void run() {                                    
-		    	try {
-		    		CranberryServerManager server = new CranberryServerManager();
-		    		JSONObject siteJson = server.getJSONFromURL(tidmarshURL);
-		    		JSONObject siteDevicesValues = (JSONObject) siteJson.get("devices");
-		    		String siteDevicesLink = siteDevicesValues.get("_href").toString();
-		    		System.out.println("#####");
-
-		    		System.out.println(siteJson);
-		    		System.out.println("#####");
-
-		    		System.out.println(siteDevicesValues);
-		    		System.out.println("#####");
-
-		    		System.out.println(server.getJSONFromURL(siteDevicesLink));
-//TODO  cache of data of each sensor and update per request.lang lend 0.0.0 gps locations
-		    		//TODO google places?
-		    		
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			CranberryJsonEvaluator evaluator = new CranberryJsonEvaluator(tidmarshURL);
+		    public void run() {     
+				try {
+					evaluator.getListOfNodes(evaluator.getSiteJSON());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -48,6 +29,7 @@ public class MainActivity extends Activity {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+		    	
 		    }
 		};
 		downloadThread.start();
