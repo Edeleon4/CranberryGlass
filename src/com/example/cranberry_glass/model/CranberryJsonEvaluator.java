@@ -42,8 +42,13 @@ public class CranberryJsonEvaluator {
 			System.out.println("$$$$$$@#@#@$$");
 			for ( int i = 0 ; i < sensorsArray.length() ; i++ ){
 				System.out.println(i);
-				JSONArray blah = sensorsArray.getJSONObject(i).getJSONArray("data");
-				System.out.println(blah.get("sensors"));
+				System.out.println(sensorsArray.getJSONObject(i).get("name"));
+				JSONArray blah = sensorsArray.getJSONObject(i).getJSONObject("sensors").getJSONArray("data");
+				System.out.println(blah.getJSONObject(0));
+				System.out.println(blah.getJSONObject(0).get("metric"));
+				System.out.println(blah.getJSONObject(0).get("unit"));
+				System.out.println(blah.getJSONObject(0).getJSONObject("history").get("_href"));
+
 				break;
 				
 				
