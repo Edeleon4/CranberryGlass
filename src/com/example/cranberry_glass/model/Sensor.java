@@ -1,11 +1,13 @@
 package com.example.cranberry_glass.model;
 
+import java.util.Arrays;
+
 public class Sensor {
 	
 	@Override
 	public String toString() {
 		return "Sensor [units=" + units + ", name=" + name + ", dataUrl="
-				+ dataUrl + "dataArray=" + dataArray.toString() + "]";
+				+ dataUrl + "dataArray=" + Arrays.toString(dataArray) + "]";
 	}
 	private String units;
 	private String name;
