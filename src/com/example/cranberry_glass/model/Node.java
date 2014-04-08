@@ -11,6 +11,18 @@ public class Node {
 		this.sensorsArray = sensorArray;
 	}
 
+
+
+
+	@Override
+	public String toString() {
+		return "Node [nodeName=" + nodeName + ", sensorsArray=" + sensorsArray
+				+ "]";
+	}
+
+
+
+
 	public String getNodeName() {
 		return nodeName;
 	}
