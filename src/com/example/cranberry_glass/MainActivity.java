@@ -1,10 +1,12 @@
 package com.example.cranberry_glass;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 
 import com.example.cranberry_glass.model.CranberryJsonEvaluator;
+import com.example.cranberry_glass.model.Node;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -12,6 +14,7 @@ import android.view.Menu;
 
 public class MainActivity extends Activity {
 	private final String tidmarshURL = "http://tidmarsh.media.mit.edu/api/sites/7";
+    protected ArrayList<Node> nodes;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +24,7 @@ public class MainActivity extends Activity {
 			CranberryJsonEvaluator evaluator = new CranberryJsonEvaluator(tidmarshURL);
 		    public void run() {     
 				try {
-					evaluator.getListOfNodes(evaluator.getSiteJSON());
+					nodes = evaluator.getListOfNodes(evaluator.getSiteJSON());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -36,6 +39,7 @@ public class MainActivity extends Activity {
 
 		
 		setContentView(R.layout.activity_main);
+		
 	}
 
 	@Override
