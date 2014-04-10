@@ -1,10 +1,12 @@
 package com.example.cranberry_glass;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 
 import com.example.cranberry_glass.model.CranberryJsonEvaluator;
+import com.example.cranberry_glass.model.Node;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -21,7 +23,8 @@ public class MainActivity extends Activity {
 			CranberryJsonEvaluator evaluator = new CranberryJsonEvaluator(tidmarshURL);
 		    public void run() {     
 				try {
-					evaluator.getListOfNodes(evaluator.getSiteJSON());
+					ArrayList<Node> x = evaluator.getListOfNodes(evaluator.getSiteJSON());
+					System.out.println(x);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
