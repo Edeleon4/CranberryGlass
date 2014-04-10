@@ -44,18 +44,18 @@ public class CranberryJsonEvaluator {
 		return siteDevicesLink;
 	}
 
-	public void getListOfNodes(String siteDevicesURL) {
+	public ArrayList<Node> getListOfNodes(String siteDevicesURL) {
+		ArrayList<Node> nodesList = null;
 		try {
 			JSONObject siteJson = server.getJSONFromURL(siteDevicesURL);
 			JSONArray nodesArray = siteJson.getJSONArray("data");
-			ArrayList<Node> nodesList = new ArrayList<Node>();
+			nodesList = new ArrayList<Node>();
 			for (int i = 0; i < nodesArray.length(); i++) {
 				JSONObject node = nodesArray.getJSONObject(i);
 				nodesList.add(new Node(node.getString("name"),
 						getSensorsofNode(node)));
 				getSensorsofNode(node);
 			}
-			System.out.println(nodesList.toString());
 
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
@@ -67,6 +67,7 @@ public class CranberryJsonEvaluator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return nodesList;
 
 	}
 
