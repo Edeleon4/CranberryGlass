@@ -20,7 +20,7 @@
     
     android:background="@android:color/white">
 
-    <com.google.android.glass.sample.compass.LinechartView
+    <com.example.cranberry_glass.LineChartView
         android:id="@+id/graph"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

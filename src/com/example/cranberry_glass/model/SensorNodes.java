@@ -19,6 +19,7 @@ public class SensorNodes {
         this.currentSensorIndex = 0;
     }
 
+
     private void checkRep() {
         assert(!nodes.isEmpty());
         assert(currentNodeIndex < nodes.size());
@@ -30,28 +31,37 @@ public class SensorNodes {
     public ArrayList<Node> getNearbyNodes(double latitude, double longitude) {
         return null;
     }
+    public float[] getCurrentData(){
+        if(nodes.isEmpty()){
+            return new float[]{1,2,3,4,5,6,7,8,9,10};
+        }
+        checkRep();
+        return getCurrentSensor().getDataArray();
+    }
     
-    public Node getCurrentNode(){
+    
+    
+    private Node getCurrentNode(){
         checkRep();
         return nodes.get(currentNodeIndex);
     }
-    public Sensor getCurrentSensor(){
+    private Sensor getCurrentSensor(){
         checkRep();
         return getCurrentNode().getSensorsArray().get(currentSensorIndex);
     }
-    public Node getNextNodeRight(){
+    private Node getNextNodeRight(){
         currentNodeIndex = (currentNodeIndex+1)%nodes.size();
         return getCurrentNode();
     }
-    public Sensor getNextSensorRight(){
+    private Sensor getNextSensorRight(){
         currentSensorIndex = (currentSensorIndex+1)%getCurrentNode().getSensorsArray().size();
         return getCurrentSensor();
     }
-    public Node getNextNodeLeft(){
+    private Node getNextNodeLeft(){
         currentNodeIndex = (currentNodeIndex+nodes.size()-1)%nodes.size();
         return getCurrentNode();
     }
-    public Sensor getNextSensorLeft(){
+    private Sensor getNextSensorLeft(){
         int sensorArraySize = getCurrentNode().getSensorsArray().size();
         currentSensorIndex = (currentSensorIndex+sensorArraySize-1)%sensorArraySize;
         return getCurrentSensor();

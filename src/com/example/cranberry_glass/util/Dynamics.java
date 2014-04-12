@@ -1,5 +1,6 @@
 package com.example.cranberry_glass.util;
 
+
 import android.util.FloatMath;
 
 public class Dynamics {

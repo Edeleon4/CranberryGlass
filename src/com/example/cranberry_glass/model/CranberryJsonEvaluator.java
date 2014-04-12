@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 public class CranberryJsonEvaluator {
 	String siteURL;
 	final int MAX_POINT = 10;
@@ -19,6 +21,7 @@ public class CranberryJsonEvaluator {
 			Arrays.asList(new String[] { "bmp_temperature", "bmp_pressure",
 					"illuminance", "sht_humidity", "sht_temperature",
 					"solar_voltage" }));
+    private static final String TAG = CranberryJsonEvaluator.class.getSimpleName();
 
 	public CranberryJsonEvaluator(String url) {
 		siteURL = url;
@@ -77,14 +80,15 @@ public class CranberryJsonEvaluator {
 				"data");
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		for (int i = 0; i < sensorsOfNode.length(); i++) {
+		    Log.i(TAG,i+"");
 			JSONObject sensor = sensorsOfNode.getJSONObject(i);
 			if (SENSORS.contains(sensor.get("metric"))) {
 				String dataURL= sensor.getJSONObject("history").getString("_href");
 				JSONArray data = server.getJSONFromURL(dataURL).getJSONArray("data");
-				Double[] dataArray = new Double[MAX_POINT];
+				double[] dataArray = new double[MAX_POINT];
 
-				for (int j=0 ; j <MAX_POINT ; j++){
-				dataArray[j] = data.getJSONObject(j).getDouble("value");
+				for (int j=0 ; j < MAX_POINT ; j++){
+				dataArray[j] = (float) data.getJSONObject(j).getDouble("value");
 				}
 				sensors.add(new Sensor(sensor.getString("metric"), sensor
 						.getString("unit"), dataURL, dataArray));

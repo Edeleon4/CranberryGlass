@@ -12,14 +12,14 @@ public class Sensor {
 	private String units;
 	private String name;
 	private String dataUrl;
-	private Double[] dataArray;
+	private float[] dataArray;
 
-	public Sensor(String name, String units, String dataUrl, Double[] dataArray){
+	public Sensor(String name, String units, String dataUrl, double[] dataArray2){
 		
 		this.units = units; 
 		this.name = name;
 		this.dataUrl = dataUrl;
-		this.dataArray = dataArray;
+		this.dataArray = convertDoubleArrayToFloatArray(dataArray2);
 	}
 	
 	public String getName(){
@@ -33,8 +33,16 @@ public class Sensor {
 		return dataUrl;
 	}
 
-	public Double[] getDataArray(){
+	public float[] getDataArray(){
 		return dataArray;
+	}
+	private float[] convertDoubleArrayToFloatArray(double[] doubles){
+	    float[] floatArray = new float[doubles.length];
+	    for (int i = 0 ; i < doubles.length; i++)
+	    {
+	        floatArray[i] = (float) doubles[i];
+	    }
+	    return floatArray;
 	}
 
 }

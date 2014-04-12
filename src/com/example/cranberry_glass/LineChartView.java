@@ -1,10 +1,6 @@
 package com.example.cranberry_glass;
 
-import java.util.List;
-
 import com.example.cranberry_glass.util.Dynamics;
-import com.example.cranberry_glass.util.MathUtils;
-import com.example.cranberry_glass.util.OrientationManager;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -25,11 +21,6 @@ public class LineChartView extends View {
     private static final int[] DISTANCES = { 1, 2, 5 };
     private static final float GRAPH_SMOOTHNES = 0.15f;
     private static final float RATIO = 4f / 4f;
-    
-    /** The actual heading that represents the direction that the user is facing. */
-    private float mHeading;
-    private OrientationManager mOrientation;
-    private List<SensorNode> mNearbyNodes;
 
     private Dynamics[] datapoints;
     private Paint paint = new Paint();
@@ -54,9 +45,6 @@ public class LineChartView extends View {
 
     public LineChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setChartData(new float[] { 10, 12, 7, 14, 15, 19, 13, 2, 10, 13, 13, 10, 15, 14 });
-        
-        
     }
 
     /**
@@ -68,7 +56,6 @@ public class LineChartView extends View {
      *            y values of the line chart
      */
     public void setChartData(float[] newDatapoints) {
-        
         long now = AnimationUtils.currentAnimationTimeMillis();
         if (datapoints == null || datapoints.length != newDatapoints.length) {
             datapoints = new Dynamics[newDatapoints.length];
@@ -85,18 +72,6 @@ public class LineChartView extends View {
             removeCallbacks(animator);
             post(animator);
         }
-    }
-    
-    /**
-     * Sets the list of nearby nodes that the app should display. This list is recalculated
-     * whenever the user's location changes, so that only locations within a certain distance will
-     * be displayed.
-     *
-     * @param nodes the list of {@code Place}s that should be displayed
-     */
-    public void setNearbyNodes(List<SensorNode> nodes) {
-        mNearbyNodes = nodes;
-        this.setChartData(mNearbyNodes.get(0).data);
     }
 
     @Override
@@ -186,7 +161,6 @@ public class LineChartView extends View {
         canvas.drawPath(path, paint);
         paint.setShadowLayer(0, 0, 0, 0);
     }
-    
 
     private Path createSmoothPath(float maxValue) {
 
@@ -214,25 +188,6 @@ public class LineChartView extends View {
         return path;
     }
 
-    /**
-     * Gets the current heading in degrees.
-     *
-     * @return the current heading.
-     */
-    public float getHeading() {
-        return mHeading;
-    }
-
-    /**
-     * Sets the current heading in degrees and redraws the compass. If the angle is not between 0
-     * and 360, it is shifted to be in that range.
-     *
-     * @param degrees the current heading
-     */
-    public void setHeading(float degrees) {
-        mHeading = MathUtils.mod(degrees, 360.0f);
-    }
-    
     /**
      * Given an index in datapoints, it will make sure the the returned index is
      * within the array
@@ -286,13 +241,5 @@ public class LineChartView extends View {
 
         return value;
     }
-    /**
-     * Sets the instance of {@link OrientationManager} that this view will use to get the current
-     * heading and location.
-     *
-     * @param orientationManager the instance of {@code OrientationManager} that this view will use
-     */
-    public void setOrientationManager(OrientationManager orientationManager) {
-        mOrientation = orientationManager;
-    }
+
 }
