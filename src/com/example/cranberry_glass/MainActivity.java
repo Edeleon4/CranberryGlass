@@ -1,28 +1,33 @@
 package com.example.cranberry_glass;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.json.JSONException;
 
 import com.example.cranberry_glass.model.CranberryJsonEvaluator;
-import com.example.cranberry_glass.model.Node;
 import com.example.cranberry_glass.model.SensorNodes;
+import com.google.android.glass.touchpad.Gesture;
+import com.google.android.glass.touchpad.GestureDetector;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.view.Menu;
-import android.widget.Toast;
+import android.view.MotionEvent;
 
 public class MainActivity extends Activity {
 	private final String tidmarshURL = "http://tidmarsh.media.mit.edu/api/sites/7";
     protected SensorNodes nodes;
+    private GestureDetector gestureDetector;
+    private LineChartView linechart;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_main);
-        final LineChartView linechart = (LineChartView) findViewById(R.id.linechart);
+        gestureDetector = createGestureDetector(this);
+
+        linechart = (LineChartView) findViewById(R.id.linechart);
         linechart.setChartData(new float[]{ 1, 2,3, 4,5,6,7,8,9,10}); 
         
 		Thread downloadThread = new Thread() {  
@@ -32,7 +37,6 @@ public class MainActivity extends Activity {
 				try {
 					nodes = new SensorNodes(evaluator.getListOfNodes(evaluator.getSiteJSON()));
 					linechart.setChartData(nodes.getCurrentData());
-					Toast.makeText(getBaseContext(), "completed download", Toast.LENGTH_LONG);
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (JSONException e) {
@@ -50,5 +54,63 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+	private GestureDetector createGestureDetector(Context context) {
+	    GestureDetector gestureDetector = new GestureDetector(context);
+	        //Create a base listener for generic gestures
+	        gestureDetector.setBaseListener( new GestureDetector.BaseListener() {
+	            @Override
+	            public boolean onGesture(Gesture gesture) {
+	                if (gesture == Gesture.TAP) {
+	                    // do something on tap
+	                    return true;
+	                } else if (gesture == Gesture.TWO_TAP) {
+	                    // do something on two finger tap
+	                    return true;
+	                } else if (gesture == Gesture.SWIPE_RIGHT) {
+	                    // do something on right (forward) swipe
+	                    //linechart.setChartData(nodes.getNodeShiftRightData());
+	                    return true;
+	                } else if (gesture == Gesture.SWIPE_LEFT) {
+	                    // do something on left (backwards) swipe
+	                    //linechart.setChartData(nodes.getNodeShiftLeftData());
+	                    return true;
+	                }else if (gesture == Gesture.TWO_SWIPE_LEFT) {
+                        // do something on left (backwards) swipe
+	                    //linechart.setChartData(nodes.getSensorShiftRightData());
+                        return true;
+                    }else if (gesture == Gesture.TWO_SWIPE_RIGHT) {
+                        // do something on left (backwards) swipe
+                        //linechart.setChartData(nodes.getSensorShiftLeftData());
+                        return true;
+                    }
+	                return false;
+	            }
 
+	        });
+	        gestureDetector.setFingerListener(new GestureDetector.FingerListener() {
+	            @Override
+	            public void onFingerCountChanged(int previousCount, int currentCount) {
+	              // do something on finger count changes
+	            }
+	        });
+	        gestureDetector.setScrollListener(new GestureDetector.ScrollListener() {
+	            @Override
+	            public boolean onScroll(float displacement, float delta, float velocity) {
+                    return false;
+	                // do something on scrolling
+	            }
+	        });
+	        return gestureDetector;
+	    }
+
+	    /*
+	     * Send generic motion events to the gesture detector
+	     */
+	    @Override
+	    public boolean onGenericMotionEvent(MotionEvent event) {
+	        if (gestureDetector != null) {
+	            return gestureDetector.onMotionEvent(event);
+	        }
+	        return false;
+	    }
 }

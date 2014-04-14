@@ -1,10 +1,6 @@
 package com.example.cranberry_glass.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-
 
 public class SensorNodes {
 
@@ -31,6 +27,15 @@ public class SensorNodes {
     public ArrayList<Node> getNearbyNodes(double latitude, double longitude) {
         return null;
     }
+    public String getCurrentNodeId(){
+        return getCurrentSensor().getName();
+    }
+    public String getCurrentSensorType(){
+        return getCurrentSensor().getName();
+    }
+    public String getCurrentUnits(){
+        return getCurrentSensor().getUnits();
+    }
     public float[] getCurrentData(){
         if(nodes.isEmpty()){
             return new float[]{1,2,3,4,5,6,7,8,9,10};
@@ -38,7 +43,38 @@ public class SensorNodes {
         checkRep();
         return getCurrentSensor().getDataArray();
     }
-    
+    public float[] getNodeShiftRightData(){
+        if(nodes.isEmpty()){
+            return new float[]{1,2,3,4,5,6,7,8,9,10};
+        }
+        checkRep();
+        this.shiftNodeRight();
+        return getCurrentData();
+    }
+    public float[] getNodeShiftLeftData(){
+        if(nodes.isEmpty()){
+            return new float[]{1,2,3,4,5,6,7,8,9,10};
+        }
+        checkRep();
+        this.shiftNodeLeft();
+        return getCurrentData();
+    }
+    public float[] getSensorShiftRightData(){
+        if(nodes.isEmpty()){
+            return new float[]{1,2,3,4,5,6,7,8,9,10};
+        }
+        checkRep();
+        this.shiftSensorRight();
+        return getCurrentData();
+    }
+    public float[] getSensorShiftLeftData(){
+        if(nodes.isEmpty()){
+            return new float[]{1,2,3,4,5,6,7,8,9,10};
+        }
+        checkRep();
+        this.shiftSensorLeft();
+        return getCurrentData();
+    }
     
     
     private Node getCurrentNode(){
@@ -49,22 +85,24 @@ public class SensorNodes {
         checkRep();
         return getCurrentNode().getSensorsArray().get(currentSensorIndex);
     }
-    private Node getNextNodeRight(){
-        currentNodeIndex = (currentNodeIndex+1)%nodes.size();
-        return getCurrentNode();
-    }
-    private Sensor getNextSensorRight(){
-        currentSensorIndex = (currentSensorIndex+1)%getCurrentNode().getSensorsArray().size();
-        return getCurrentSensor();
-    }
-    private Node getNextNodeLeft(){
+    
+    private void shiftNodeLeft() {
         currentNodeIndex = (currentNodeIndex+nodes.size()-1)%nodes.size();
-        return getCurrentNode();
     }
-    private Sensor getNextSensorLeft(){
+
+
+    private void shiftNodeRight() {
+        currentNodeIndex = (currentNodeIndex+1)%nodes.size();
+    }
+    private void shiftSensorLeft() {
         int sensorArraySize = getCurrentNode().getSensorsArray().size();
         currentSensorIndex = (currentSensorIndex+sensorArraySize-1)%sensorArraySize;
-        return getCurrentSensor();
     }
+
+
+    private void shiftSensorRight() {
+        currentSensorIndex = (currentSensorIndex+1)%getCurrentNode().getSensorsArray().size();
+    }
+
 
 }

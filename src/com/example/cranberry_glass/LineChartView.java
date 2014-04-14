@@ -110,11 +110,12 @@ public class LineChartView extends View {
     }
 
     private void drawBackground(Canvas canvas, float maxValue) {
+
         int range = getLineDistance(maxValue);
         paint.setStyle(Style.FILL);
         paint.setColor(Color.GRAY);
         paint.setTextAlign(Align.LEFT);
-        paint.setTextSize(16);
+        paint.setTextSize(24);
         paint.setStrokeWidth(1);
         for (int y = 0; y < maxValue; y += range) {
             final int yPos = (int) getYPos(y, maxValue);
