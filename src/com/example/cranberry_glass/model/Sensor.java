@@ -12,14 +12,16 @@ public class Sensor {
 	private String units;
 	private String name;
 	private String dataUrl;
-	private float[] dataArray;
+	private float recentValue;
+	private ArrayList<float> dataArray;
 
-	public Sensor(String name, String units, String dataUrl, double[] dataArray2){
+	public Sensor(String name, String units, String dataUrl, ArrayList<float> dataArray, float recentValue){
 		
 		this.units = units; 
 		this.name = name;
 		this.dataUrl = dataUrl;
-		this.dataArray = convertDoubleArrayToFloatArray(dataArray2);
+		this.recentValue = recentValue;
+		this.dataArray = dataArray;
 	}
 	
 	public String getName(){
@@ -32,17 +34,13 @@ public class Sensor {
 	public String getDataUrl(){
 		return dataUrl;
 	}
-
-	public float[] getDataArray(){
-		return dataArray;
+	
+	public float getRecentValue(){
+		return recentValue;
 	}
-	private float[] convertDoubleArrayToFloatArray(double[] doubles){
-	    float[] floatArray = new float[doubles.length];
-	    for (int i = 0 ; i < doubles.length; i++)
-	    {
-	        floatArray[i] = (float) doubles[i];
-	    }
-	    return floatArray;
+
+	public ArrayList<float> getDataArray(){
+		return dataArray;
 	}
 
 }

@@ -36,28 +36,30 @@ public class CranberryJsonEvaluator {
 	 * @throws JSONException
 	 */
 	public String getSiteJSON() throws IOException, JSONException {
-		String siteDevicesLink = "";
+		String siteSummaryHref = "";
 		try {
 			JSONObject siteJson = server.getJSONFromURL(siteURL);
-			JSONObject siteDevicesValues = (JSONObject) siteJson.get("devices");
-			siteDevicesLink = siteDevicesValues.get("_href").toString();
+            JSONObject siteSummaryObject = (JSONObject) siteJson.get("_links").get("ch:siteSummary").get("href");
+            // JSONObject siteDevicesValues = (JSONObject) siteJson.get("devices");
+            siteSummaryHref = siteSummaryObject.toString();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		}
-		return siteDevicesLink;
+		return siteSummaryHref;
 	}
+	
+	
 
-	public ArrayList<Node> getListOfNodes(String siteDevicesURL) {
+	public ArrayList<Node> getListOfNodes(String siteSummaryHref) {
 		ArrayList<Node> nodesList = null;
 		try {
-			JSONObject siteJson = server.getJSONFromURL(siteDevicesURL);
-			JSONArray nodesArray = siteJson.getJSONArray("data");
+			JSONObject siteJson = server.getJSONFromURL(siteSummaryHref);
+			JSONArray nodesArray = siteJson.getJSONArray("devices");
 			nodesList = new ArrayList<Node>();
 			for (int i = 0; i < nodesArray.length(); i++) {
 				JSONObject node = nodesArray.getJSONObject(i);
 				nodesList.add(new Node(node.getString("name"),
 						getSensorsofNode(node)));
-				getSensorsofNode(node);
 			}
 
 		} catch (ClientProtocolException e) {
@@ -73,30 +75,29 @@ public class CranberryJsonEvaluator {
 		return nodesList;
 
 	}
-
+	
+	//node --> sensors --> data 
+	
 	public ArrayList<Sensor> getSensorsofNode(JSONObject node)
 			throws JSONException, ClientProtocolException, IOException {
-		JSONArray sensorsOfNode = node.getJSONObject("sensors").getJSONArray(
-				"data");
+		JSONArray sensorsOfNode = node.getJSONObject("sensors");
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		for (int i = 0; i < sensorsOfNode.length(); i++) {
-		    Log.i(TAG,i+"");
-			JSONObject sensor = sensorsOfNode.getJSONObject(i);
-			if (SENSORS.contains(sensor.get("metric"))) {
-				String dataURL= sensor.getJSONObject("history").getString("_href");
-				JSONArray data = server.getJSONFromURL(dataURL).getJSONArray("data");
-				double[] dataArray = new double[MAX_POINT];
+		    //Log.i(TAG,i+"");
+			JSONOBject sensor = sensorsOfNode.getJSONObject(i);
+			JSONObject sensorData = sensor.getJSONArray("data");
+			String metric = sensor.get("metric");
+			String href = sensor.get("href");
+			String unit = sensor.get("unit");
+			String recentValue = (float) sensor.getDouble("value");
+			
+			ArrayList<float> dataArray = new ArrayList<double>();
+            // ArrayList<String> dataArray = new ArrayList<double>();
 
-				for (int j=0 ; j < MAX_POINT ; j++){
-				dataArray[j] = (float) data.getJSONObject(j).getDouble("value");
-				}
-				sensors.add(new Sensor(sensor.getString("metric"), sensor
-						.getString("unit"), dataURL, dataArray));
-
-
-				
+			for (int j=0 ; j < sensorData.length() ; j++){
+			    dataArray.add( (float) data.getJSONObject(j).getDouble("value") );
 			}
-
+			sensors.add(new Sensor(metric, unit, href, dataArray, recentValue));
 		}
 		return sensors;
 

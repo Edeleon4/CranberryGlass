@@ -16,7 +16,7 @@ import android.view.Menu;
 import android.view.MotionEvent;
 
 public class MainActivity extends Activity {
-	private final String tidmarshURL = "http://tidmarsh.media.mit.edu/api/sites/7";
+	private final String tidmarshURL = "http://chain-api.media.mit.edu/sites/7";
     protected SensorNodes nodes;
     private GestureDetector gestureDetector;
     private LineChartView linechart;
