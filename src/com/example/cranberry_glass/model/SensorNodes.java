@@ -1,7 +1,7 @@
 package com.example.cranberry_glass.model;
 
 import java.util.ArrayList;
-
+/*
 public class SensorNodes {
 
     private ArrayList<Node> nodes;
@@ -105,4 +105,4 @@ public class SensorNodes {
     }
 
 
-}
+}*/

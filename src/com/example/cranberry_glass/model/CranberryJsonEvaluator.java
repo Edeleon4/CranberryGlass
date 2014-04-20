@@ -39,9 +39,11 @@ public class CranberryJsonEvaluator {
 		String siteSummaryHref = "";
 		try {
 			JSONObject siteJson = server.getJSONFromURL(siteURL);
-            JSONObject siteSummaryObject = (JSONObject) siteJson.get("_links").get("ch:siteSummary").get("href");
+            JSONObject siteSummaryObject = siteJson.getJSONObject("_links");
+            JSONObject siteSummaryObjectSub = siteSummaryObject.getJSONObject("ch:siteSummary");
+            siteSummaryHref = siteSummaryObjectSub.getString("href");
             // JSONObject siteDevicesValues = (JSONObject) siteJson.get("devices");
-            siteSummaryHref = siteSummaryObject.toString();
+//            siteSummaryHref = siteSummaryObject.toString();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		}
@@ -80,22 +82,22 @@ public class CranberryJsonEvaluator {
 	
 	public ArrayList<Sensor> getSensorsofNode(JSONObject node)
 			throws JSONException, ClientProtocolException, IOException {
-		JSONArray sensorsOfNode = node.getJSONObject("sensors");
+		JSONArray sensorsOfNode = node.getJSONArray("sensors");
 		ArrayList<Sensor> sensors = new ArrayList<Sensor>();
 		for (int i = 0; i < sensorsOfNode.length(); i++) {
 		    //Log.i(TAG,i+"");
-			JSONOBject sensor = sensorsOfNode.getJSONObject(i);
-			JSONObject sensorData = sensor.getJSONArray("data");
-			String metric = sensor.get("metric");
-			String href = sensor.get("href");
-			String unit = sensor.get("unit");
-			String recentValue = (float) sensor.getDouble("value");
+			JSONObject sensor = sensorsOfNode.getJSONObject(i);
+			JSONArray sensorData = sensor.getJSONArray("data");
+			String metric = sensor.getString("metric");
+			String href = sensor.getString("href");
+			String unit = sensor.getString("unit");
+			float recentValue = (float) sensor.getDouble("value");
 			
-			ArrayList<float> dataArray = new ArrayList<double>();
+			ArrayList<Float> dataArray = new ArrayList<Float>();
             // ArrayList<String> dataArray = new ArrayList<double>();
 
 			for (int j=0 ; j < sensorData.length() ; j++){
-			    dataArray.add( (float) data.getJSONObject(j).getDouble("value") );
+			    dataArray.add( (float) sensorData.getJSONObject(j).getDouble("value") );
 			}
 			sensors.add(new Sensor(metric, unit, href, dataArray, recentValue));
 		}
