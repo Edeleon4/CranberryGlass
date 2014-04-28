@@ -1,108 +1,103 @@
 package com.example.cranberry_glass.model;
 
 import java.util.ArrayList;
-/*
+
+import android.location.Location;
+import android.util.Log;
+
 public class SensorNodes {
 
+    private static final String TAG = SensorNodes.class.getSimpleName();
     private ArrayList<Node> nodes;
     private int currentNodeIndex;
     private int currentSensorIndex;
 
     public SensorNodes(ArrayList<Node> nodes) {
-        checkRep();
         this.nodes = nodes;
         this.currentNodeIndex = 0;
         this.currentSensorIndex = 0;
     }
 
-
-    private void checkRep() {
-        assert(!nodes.isEmpty());
-        assert(currentNodeIndex < nodes.size());
-        assert(currentSensorIndex < getCurrentNode().getSensorsArray().size());
-        assert(currentNodeIndex >= 0);
-        assert(currentSensorIndex >= 0);
-    }
-
     public ArrayList<Node> getNearbyNodes(double latitude, double longitude) {
         return null;
     }
-    public String getCurrentNodeId(){
+
+    public String getCurrentNodeId() {
+        return getCurrentNode().getNodeName();
+    }
+
+    public String getCurrentSensorType() {
         return getCurrentSensor().getName();
     }
-    public String getCurrentSensorType(){
-        return getCurrentSensor().getName();
-    }
-    public String getCurrentUnits(){
+
+    public String getCurrentUnits() {
         return getCurrentSensor().getUnits();
     }
-    public float[] getCurrentData(){
-        if(nodes.isEmpty()){
-            return new float[]{1,2,3,4,5,6,7,8,9,10};
+
+    public float[] getCurrentChartData() {
+        Log.i(TAG, getCurrentNode().toString());
+
+        if (nodes.isEmpty()) {
+            return new float[] { 1f, 2f, 3f, 4f, 5f, 6f, 7f, 8f, 9f, 10f };
         }
-        checkRep();
-        return getCurrentSensor().getDataArray();
+        return toChartData(getCurrentSensor().getDataArray());
     }
-    public float[] getNodeShiftRightData(){
-        if(nodes.isEmpty()){
-            return new float[]{1,2,3,4,5,6,7,8,9,10};
+
+    private float[] toChartData(ArrayList<Float> data) {
+        float[] floatArray = new float[data.size()];
+        int i = 0;
+
+        for (Float f : data) {
+            floatArray[i++] = (f != null ? f : Float.NaN); // Or whatever
+                                                           // default you want.
         }
-        checkRep();
-        this.shiftNodeRight();
-        return getCurrentData();
+        return floatArray;
+
     }
-    public float[] getNodeShiftLeftData(){
-        if(nodes.isEmpty()){
-            return new float[]{1,2,3,4,5,6,7,8,9,10};
-        }
-        checkRep();
-        this.shiftNodeLeft();
-        return getCurrentData();
-    }
-    public float[] getSensorShiftRightData(){
-        if(nodes.isEmpty()){
-            return new float[]{1,2,3,4,5,6,7,8,9,10};
-        }
-        checkRep();
-        this.shiftSensorRight();
-        return getCurrentData();
-    }
-    public float[] getSensorShiftLeftData(){
-        if(nodes.isEmpty()){
-            return new float[]{1,2,3,4,5,6,7,8,9,10};
-        }
-        checkRep();
-        this.shiftSensorLeft();
-        return getCurrentData();
-    }
-    
-    
-    private Node getCurrentNode(){
-        checkRep();
+
+    private Node getCurrentNode() {
         return nodes.get(currentNodeIndex);
     }
-    private Sensor getCurrentSensor(){
-        checkRep();
+
+    private Sensor getCurrentSensor() {
+
         return getCurrentNode().getSensorsArray().get(currentSensorIndex);
     }
-    
-    private void shiftNodeLeft() {
-        currentNodeIndex = (currentNodeIndex+nodes.size()-1)%nodes.size();
+
+    public void shiftNodeLeft() {
+        currentNodeIndex = (currentNodeIndex + nodes.size() - 1) % nodes.size();
+        currentSensorIndex = 0;
+
     }
 
+    public void shiftNodeRight() {
+        currentNodeIndex = (currentNodeIndex + 1) % nodes.size();
+        currentSensorIndex = 0;
 
-    private void shiftNodeRight() {
-        currentNodeIndex = (currentNodeIndex+1)%nodes.size();
     }
-    private void shiftSensorLeft() {
+
+    public void shiftSensorLeft() {
+
         int sensorArraySize = getCurrentNode().getSensorsArray().size();
-        currentSensorIndex = (currentSensorIndex+sensorArraySize-1)%sensorArraySize;
+        currentSensorIndex = (currentSensorIndex - 1) > 0 ? (currentSensorIndex - 1)
+                % sensorArraySize
+                : 0;
     }
 
+    public void shiftSensorRight() {
 
-    private void shiftSensorRight() {
-        currentSensorIndex = (currentSensorIndex+1)%getCurrentNode().getSensorsArray().size();
+        currentSensorIndex = (currentSensorIndex + 1)
+                % getCurrentNode().getSensorsArray().size();
     }
 
+    public void setUserLocation(Location location) {
+        // TODO Auto-generated method stub
 
-}*/
+    }
+
+    public void setZerothSensor() {
+        currentSensorIndex = 0;
+        currentNodeIndex = 0;
+    }
+
+}

@@ -1,6 +1,6 @@
 package com.example.cranberry_glass;
 
-import com.example.cranberry_glass.util.Dynamics;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,6 +14,10 @@ import android.util.FloatMath;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 
+import com.example.cranberry_glass.model.Node;
+import com.example.cranberry_glass.util.Dynamics;
+import com.example.cranberry_glass.util.OrientationManager;
+
 public class LineChartView extends View {
 
     private static final int MIN_LINES = 3;
@@ -22,7 +26,7 @@ public class LineChartView extends View {
     private static final float GRAPH_SMOOTHNES = 0.15f;
     private static final float RATIO = 4f / 4f;
 
-    private Dynamics[] datapoints;
+    private Dynamics[] datapoints = null;
     private Paint paint = new Paint();
 
     private Runnable animator = new Runnable() {
@@ -42,6 +46,8 @@ public class LineChartView extends View {
             invalidate();
         }
     };
+    private OrientationManager mOrientationManager;
+    private String title;
 
     public LineChartView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,7 +61,8 @@ public class LineChartView extends View {
      * @param datapoints
      *            y values of the line chart
      */
-    public void setChartData(float[] newDatapoints) {
+    public void setChartData(float[] newDatapoints, String newTitle) {
+        title = newTitle;
         long now = AnimationUtils.currentAnimationTimeMillis();
         if (datapoints == null || datapoints.length != newDatapoints.length) {
             datapoints = new Dynamics[newDatapoints.length];
@@ -80,16 +87,16 @@ public class LineChartView extends View {
 
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
-        int widthWithoutPadding = width - getPaddingLeft() - getPaddingRight();
-        int heigthWithoutPadding = height - getPaddingTop() - getPaddingBottom();
+        int widthWithoutPadding = width - 20;
+        int heigthWithoutPadding = height - 10 - 10;
 
         int maxWidth = (int) (heigthWithoutPadding * RATIO);
         int maxHeight = (int) (widthWithoutPadding / RATIO);
 
         if (widthWithoutPadding > maxWidth) {
-            width = maxWidth + getPaddingLeft() + getPaddingRight();
+            width = maxWidth + 10 + 10;
         } else {
-            height = maxHeight + getPaddingTop() + getPaddingBottom();
+            height = maxHeight + 10 + 10;
         }
 
         if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
@@ -104,33 +111,43 @@ public class LineChartView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        float maxValue = getMax(datapoints);
-        drawBackground(canvas, maxValue);
-        drawLineChart(canvas, maxValue);
-    }
+        if (datapoints != null) {
+            float maxValue = getMax(datapoints);
+            float minValue = getMin(datapoints);
 
-    private void drawBackground(Canvas canvas, float maxValue) {
-
-        int range = getLineDistance(maxValue);
-        paint.setStyle(Style.FILL);
-        paint.setColor(Color.GRAY);
-        paint.setTextAlign(Align.LEFT);
-        paint.setTextSize(24);
-        paint.setStrokeWidth(1);
-        for (int y = 0; y < maxValue; y += range) {
-            final int yPos = (int) getYPos(y, maxValue);
-
-            // turn off anti alias for lines, they get crisper then
-            paint.setAntiAlias(false);
-            canvas.drawLine(0, yPos, getWidth(), yPos, paint);
-
-            // turn on anti alias again for the text
-            paint.setAntiAlias(true);
-            canvas.drawText(String.valueOf(y), getPaddingLeft(), yPos - 2, paint);
+            drawBackground(canvas, maxValue, minValue);
+            drawLineChart(canvas, maxValue, minValue);
         }
     }
 
-    private int getLineDistance(float maxValue) {
+    private void drawBackground(Canvas canvas, float maxValue, float minValue) {
+
+        int range = getLineDistance(maxValue, minValue);
+        paint.setTextSize(24);
+        paint.setColor(Color.WHITE);
+        paint.setTextAlign(Align.CENTER);
+        paint.setStrokeWidth(1);
+        canvas.drawText(title, getWidth() / 2, 20, paint);
+
+        paint.setTextAlign(Align.LEFT);
+        paint.setStrokeWidth(2);
+        paint.setAntiAlias(false);
+        canvas.drawLine(10 * 4, getHeight() - 10, 10 * 4, 40, paint);
+
+        canvas.drawLine(10, getHeight() - 10 * 2, getWidth(),
+                getHeight() - 10 * 2, paint);
+        paint.setAntiAlias(true);
+        paint.setStrokeWidth(1);
+
+        for (int y = 0; y < maxValue; y += range) {
+            final int yPos = (int) getYPos(y, maxValue, minValue);
+            // turn on anti alias again for the text
+            paint.setAntiAlias(true);
+            canvas.drawText(String.valueOf(y), 0, yPos - 2, paint);
+        }
+    }
+
+    private int getLineDistance(float maxValue, float minValue) {
         long distance;
         int distanceIndex = 0;
         long distanceMultiplier = 1;
@@ -151,40 +168,45 @@ public class LineChartView extends View {
         return (int) distance;
     }
 
-    private void drawLineChart(Canvas canvas, float maxValue) {
-        Path path = createSmoothPath(maxValue);
+    private void drawLineChart(Canvas canvas, float maxValue, float minValue) {
+        Path path = createSmoothPath(maxValue, minValue);
 
         paint.setStyle(Style.STROKE);
         paint.setStrokeWidth(4);
-        paint.setColor(0xFF33B5E5);
+        paint.setColor(Color.WHITE);
         paint.setAntiAlias(true);
         paint.setShadowLayer(4, 2, 2, 0x81000000);
         canvas.drawPath(path, paint);
         paint.setShadowLayer(0, 0, 0, 0);
     }
 
-    private Path createSmoothPath(float maxValue) {
+    private Path createSmoothPath(float maxValue, float minValue) {
 
         Path path = new Path();
-        path.moveTo(getXPos(0), getYPos(datapoints[0].getPosition(), maxValue));
+        path.moveTo(getXPos(0),
+                getYPos(datapoints[0].getPosition(), maxValue, minValue));
         for (int i = 0; i < datapoints.length - 1; i++) {
             float thisPointX = getXPos(i);
-            float thisPointY = getYPos(datapoints[i].getPosition(), maxValue);
+            float thisPointY = getYPos(datapoints[i].getPosition(), maxValue,
+                    minValue);
             float nextPointX = getXPos(i + 1);
-            float nextPointY = getYPos(datapoints[si(i + 1)].getPosition(), maxValue);
+            float nextPointY = getYPos(datapoints[si(i + 1)].getPosition(),
+                    maxValue, minValue);
 
             float startdiffX = (nextPointX - getXPos(si(i - 1)));
-            float startdiffY = (nextPointY - getYPos(datapoints[si(i - 1)].getPosition(), maxValue));
+            float startdiffY = (nextPointY - getYPos(
+                    datapoints[si(i - 1)].getPosition(), maxValue, minValue));
             float endDiffX = (getXPos(si(i + 2)) - thisPointX);
-            float endDiffY = (getYPos(datapoints[si(i + 2)].getPosition(), maxValue) - thisPointY);
+            float endDiffY = (getYPos(datapoints[si(i + 2)].getPosition(),
+                    maxValue, minValue) - thisPointY);
 
             float firstControlX = thisPointX + (GRAPH_SMOOTHNES * startdiffX);
             float firstControlY = thisPointY + (GRAPH_SMOOTHNES * startdiffY);
             float secondControlX = nextPointX - (GRAPH_SMOOTHNES * endDiffX);
             float secondControlY = nextPointY - (GRAPH_SMOOTHNES * endDiffY);
 
-            path.cubicTo(firstControlX, firstControlY, secondControlX, secondControlY, nextPointX,
-                    nextPointY);
+            path.cubicTo(firstControlX, firstControlY, secondControlX,
+                    secondControlY, nextPointX, nextPointY);
         }
         return path;
     }
@@ -215,32 +237,51 @@ public class LineChartView extends View {
         return max;
     }
 
-    private float getYPos(float value, float maxValue) {
-        float height = getHeight() - getPaddingTop() - getPaddingBottom();
+    private float getMin(Dynamics[] array) {
+        float min = array[0].getPosition();
+        for (int i = 1; i < array.length; i++) {
+            if (array[i].getPosition() < min) {
+                min = array[i].getPosition();
+            }
+        }
+        return min;
+    }
+
+    private float getYPos(float value, float maxValue, float minValue) {
+        float height = getHeight() - 20 - 20;
 
         // scale it to the view size
         value = (value / maxValue) * height;
 
         // invert it so that higher values have lower y
-        value = height - value;
+        value = height - value + 40;
 
         // offset it to adjust for padding
-        value += getPaddingTop();
+        value += 0;
 
         return value;
     }
 
     private float getXPos(float value) {
-        float width = getWidth() - getPaddingLeft() - getPaddingRight();
+        float width = getWidth() - 10 - 10;
         float maxValue = datapoints.length - 1;
 
         // scale it to the view size
         value = (value / maxValue) * width;
 
         // offset it to adjust for padding
-        value += getPaddingLeft();
+        value += 10 * 4.3f;
 
         return value;
+    }
+
+    public void setNearbyNodes(List<Node> nodes) {
+        // TODO Auto-generated method stub
+
+    }
+
+    public void setOrientationManager(OrientationManager orientationManager) {
+        mOrientationManager = orientationManager;
     }
 
 }

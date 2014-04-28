@@ -8,6 +8,13 @@
 package com.example.cranberry_glass;
 
 public final class R {
+    public static final class array {
+        /**  Launch-related strings. 
+ Strings describing locations. 
+         */
+        public static final int direction_abbreviations=0x7f080000;
+        public static final int spoken_directions=0x7f080001;
+    }
     public static final class attr {
     }
     public static final class dimen {
@@ -18,46 +25,84 @@ public final class R {
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
     
          */
-        public static final int activity_horizontal_margin=0x7f050000;
-        public static final int activity_vertical_margin=0x7f050001;
-        public static final int card_margin=0x7f050009;
-        public static final int domain_label_font_size=0x7f050004;
-        public static final int domain_tick_label_font_size=0x7f050007;
-        public static final int legend_text_font_size=0x7f050008;
-        public static final int pie_segment_label_font_size=0x7f050002;
-        public static final int range_label_font_size=0x7f050005;
-        public static final int range_tick_label_font_size=0x7f050006;
-        public static final int title_font_size=0x7f050003;
+        public static final int activity_horizontal_margin=0x7f060000;
+        public static final int activity_vertical_margin=0x7f060001;
+        public static final int domain_label_font_size=0x7f060004;
+        public static final int domain_tick_label_font_size=0x7f060007;
+        /**  The maximum height of the body content inside a card. 
+         */
+        public static final int glass_card_body_height=0x7f06000c;
+        /**  The recommended margin between the bottom of the card and the footer. This is
+         an adjusted value so that the baseline of the text in the footer sits 40px
+         from the bottom of the card, matching the other margins. 
+         */
+        public static final int glass_card_footer_margin=0x7f06000a;
+        /**  The width of the left column in the two-column layout. 
+         */
+        public static final int glass_card_left_column_width=0x7f06000d;
+        /**  The recommended margin for the top, left, and right edges of a card. 
+         */
+        public static final int glass_card_margin=0x7f060009;
+        /**  The recommended margin for the left column of the two-column card. 
+         */
+        public static final int glass_card_two_column_margin=0x7f06000b;
+        public static final int legend_text_font_size=0x7f060008;
+        public static final int pie_segment_label_font_size=0x7f060002;
+        public static final int range_label_font_size=0x7f060005;
+        public static final int range_tick_label_font_size=0x7f060006;
+        public static final int title_font_size=0x7f060003;
     }
     public static final class drawable {
         public static final int gradient50=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
-        public static final int ic_read_aloud=0x7f020002;
-        public static final int ic_stop=0x7f020003;
+        public static final int ic_compass=0x7f020001;
+        public static final int ic_launcher=0x7f020002;
+        public static final int ic_read_aloud=0x7f020003;
+        public static final int ic_stop=0x7f020004;
+        public static final int place_mark=0x7f020005;
     }
     public static final class id {
-        public static final int action_settings=0x7f090006;
-        public static final int graph=0x7f090001;
-        public static final int linechart=0x7f090000;
-        public static final int mySimpleXYPlot=0x7f090005;
-        public static final int node_id_view=0x7f090004;
-        public static final int text_container=0x7f090002;
-        public static final int title_view=0x7f090003;
+        public static final int action_settings=0x7f0b000a;
+        public static final int body_layout=0x7f0b0001;
+        public static final int footer=0x7f0b0005;
+        public static final int footer_container=0x7f0b0004;
+        public static final int header=0x7f0b0002;
+        public static final int layout=0x7f0b0000;
+        public static final int linechart=0x7f0b0003;
+        public static final int mySimpleXYPlot=0x7f0b0007;
+        public static final int read_aloud=0x7f0b0008;
+        public static final int stop=0x7f0b0009;
+        public static final int units=0x7f0b0006;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int fragment_main=0x7f030001;
-        public static final int graph=0x7f030002;
-        public static final int simple_xy_plot=0x7f030003;
+        public static final int simple_xy_plot=0x7f030002;
     }
     public static final class menu {
-        public static final int main=0x7f080000;
+        public static final int compass=0x7f0a0000;
+        public static final int main=0x7f0a0001;
+    }
+    public static final class raw {
+        public static final int landmarks=0x7f050000;
     }
     public static final class string {
-        public static final int action_settings=0x7f060002;
-        public static final int app_name=0x7f060000;
-        public static final int hello_world=0x7f060001;
-        public static final int show_compass_voice_trigger=0x7f060003;
+        public static final int action_settings=0x7f070002;
+        public static final int app_name=0x7f070000;
+        public static final int hello_world=0x7f070001;
+        public static final int magnetic_interference=0x7f070008;
+        /**  Warning messages. 
+         */
+        public static final int pitch_too_steep=0x7f070007;
+        public static final int place_text_format=0x7f070006;
+        /**  Menu item strings. 
+         */
+        public static final int read_aloud=0x7f070009;
+        public static final int show_compass_voice_trigger=0x7f070003;
+        /**  Spoken strings. 
+         */
+        public static final int spoken_heading_format=0x7f070004;
+        public static final int spoken_heading_format_one=0x7f070005;
+        public static final int stop=0x7f07000a;
     }
     public static final class style {
         /** 
@@ -81,15 +126,17 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f070001;
+        public static final int AppTheme=0x7f090001;
+        public static final int MenuTheme=0x7f090002;
     }
     public static final class xml {
         public static final int graph_show=0x7f040000;
         public static final int line_point_formatter_with_plf1=0x7f040001;
         public static final int line_point_formatter_with_plf2=0x7f040002;
+        public static final int linechart_show=0x7f040003;
     }
 }
